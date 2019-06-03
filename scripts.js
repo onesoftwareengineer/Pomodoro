@@ -15,8 +15,8 @@ function StartTimer() {
     loop = setInterval( () => {
         //verifica daca s-a terminat timpul
         if( timer > 0 ) {
-            main.innerHTML = `<h1>${timer}</h1>`;
             timer = timer - 1;
+            main.innerHTML = `<h1>${timer}</h1>`;            
             console.log(timer);
         }
         //daca a ajuns la zero timerul, adica pomodoro-ul a ajuns la final
