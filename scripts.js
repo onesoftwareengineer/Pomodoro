@@ -4,7 +4,7 @@ const footer = document.getElementById('footer');
 const buton = document.getElementById('buton');
 
 //cate secunde are un Pomodoro, in cazul nostru 60 de minute a cate 60 de secunde
-const pomodoroTime = 10;//60*60; 
+const pomodoroTime = 60*60; 
 let timer = pomodoroTime;
 
 //defining loop in global scope to be able to stop setinterval 
