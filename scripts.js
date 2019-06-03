@@ -1,14 +1,20 @@
-const stopTheCavalry = `<iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/326709754&color=%23ff5500&auto_play=true&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>`;
 const header = document.getElementById('header');
 const main = document.getElementById('main');
 const footer = document.getElementById('footer');
 const buton = document.getElementById('buton');
+
 //cate secunde are un Pomodoro, in cazul nostru 60 de minute a cate 60 de secunde
-const pomodoroTime = 60*60; 
+const pomodoroTime = 10;//60*60; 
 let timer = pomodoroTime;
+
 //defining loop in global scope to be able to stop setinterval 
 let loop;
 
+const film = document.createElement('video');
+film.src = "cavalry.mp4";
+film.load();
+
+//functia care ruleaza timerul
 function StartTimer() {    
     //schimba textul butonului deoarece a inceput timerul
     buton.innerText = 'Ia o pauza';
@@ -20,19 +26,29 @@ function StartTimer() {
             console.log(timer);
         }
         //daca a ajuns la zero timerul, adica pomodoro-ul a ajuns la final
-        else {
-            clearTimeout(loop);
-            //da drumul la fanfara, schimba timerul cu audio-ul cu stop the cavalry
-            main.innerHTML = stopTheCavalry;
-        }
+        else StartReward();
     },1000);
+};
+
+function StartReward () {
+    clearTimeout(loop);
+    main.innerHTML = '';
+    //da drumul la fanfara, schimba timerul cu audio-ul cu stop the cavalry
+    main.appendChild(film);
+    film.play();
 };
 
 //reinitializeaza timerul, butonul si timpul
 function StopTimer() {
+    //reloads audio file
+    film.load();
+    //clears setinterval 
     clearTimeout(loop);
+    //rests time
     timer = pomodoroTime;
+    //refreshes timer displayed
     main.innerHTML = `<h1>${timer}</h1>`;
+    //rests button text
     buton.innerText = 'Start Pomodoro';
 };
 
