@@ -49,6 +49,7 @@ function StartReward () {
     //da drumul la fanfara, schimba timerul cu audio-ul cu stop the cavalry
     header.appendChild(film);
     film.play();
+    buton.innerText = 'Reseteaza timerul';
 };
 
 //reinitializeaza timerul, butonul si timpul
@@ -71,7 +72,7 @@ buton.addEventListener('click', () => {
         StartTimer();
         buton.classList.add('buton-pauza');
     }
-    else if (buton.innerText === 'Ia o pauza') {
+    else if (buton.innerText === 'Ia o pauza' || buton.innerText === 'Reseteaza timerul') {
         StopTimer();
         buton.classList.remove('buton-pauza');
     }
