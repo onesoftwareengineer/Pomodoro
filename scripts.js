@@ -45,7 +45,7 @@ function transformaInCeas (x) {
 
 function StartReward () {
     clearTimeout(loop);
-    header.innerHTML = '';
+    //header.innerHTML = '';
     //da drumul la fanfara, schimba timerul cu audio-ul cu stop the cavalry
     header.appendChild(film);
     film.play();
@@ -63,6 +63,7 @@ function StopTimer() {
     header.innerHTML = `<h1>60:00</h1>`;
     //rests button text
     buton.innerText = 'Start Pomodoro';
+    document.title = 'Start Pomodoro';
 };
 
 buton.addEventListener('click', () => {

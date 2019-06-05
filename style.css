@@ -1,6 +1,12 @@
+body {
+    background-image: url("https://www.awakenthegreatnesswithin.com/wp-content/uploads/2018/05/Focus-On-Yourself-Quotes-1.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
 .content {
     max-width: 600px;
-    width: 80%;
+    width: 90%;
     margin: auto;
 }
 
@@ -9,6 +15,7 @@
     text-align: center;
     padding-top: 50px;
     padding-bottom: 50px;
+    position: relative;
 }
 
 #header h1 {
@@ -47,6 +54,16 @@
     background-color: #e6e6ea;
 }
 
+#main ul {
+    width: 80%;
+}
+
+li:first-child {
+    list-style: none;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
 #footer {
     background-color: #e6e6ea;
     padding-bottom: 50px;
@@ -54,5 +71,8 @@
 
 video {
     width: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
     /* max-width: 600px; */
 }
