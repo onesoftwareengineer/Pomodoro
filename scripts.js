@@ -1,38 +1,91 @@
-const header = document.getElementById('header');
-const main = document.getElementById('main');
-const footer = document.getElementById('footer');
-const buton = document.getElementById('buton');
-
-//cate secunde are un Pomodoro, in cazul nostru 60 de minute a cate 60 de secunde
-const pomodoroTime = 60*60; 
-let timer = pomodoroTime;
-
+const afisaj = document.getElementById('afisaj');
+const instructiuni = document.getElementById('instructiuni');
+const butoane = document.getElementById('butoane');
+const body = document.querySelector('body');
+let totalTime;
+let pomodoroFinalizateAstazi = 0;
 //defining loop in global scope to be able to stop setinterval 
 let loop;
+var aplauze = new Audio('applause.mp3');
+var horn = new Audio('horn.wav');
 
-const film = document.createElement('video');
-film.src = "cavalry.mp4";
-film.load();
 
-//functia care ruleaza timerul
-function StartTimer() {    
-    //schimba textul butonului in ia o pauza deoarece a inceput timerul
-    buton.innerText = 'Ia o pauza';
+//afiseaza prima pagina
+function homePage () {
+    body.style.backgroundImage = "url('https://optoutlife.com/wp-content/uploads/2018/04/rawpixel-550994-unsplash.jpg')";
+    butoane.style.display = 'block';
+    afisaj.innerHTML = `00:00`;
+
+    instructiuni.innerHTML = `
+        <h2> Astazi ai castigat ${pomodoroFinalizateAstazi*5} lei facand ${pomodoroFinalizateAstazi} Pomodoro.</h2>
+        <h2>Trage tare altfel pierzi ${(16-pomodoroFinalizateAstazi)*5} de lei.</h2>
+    `;   
+
+    butoane.innerHTML = `
+        <button id="30">Start 30 Min Pomodoro</button>
+        <button id="60">Start 60 Min Pomodoro</button>
+    `;
+};
+
+butoane.addEventListener ('click', (event)=> {
+    if(event.target.id === '30') startPomodoro(30);
+    else if(event.target.id === '60') startPomodoro(60);
+    else if(event.target.id === 'exit') {
+        clearTimeout(loop);   
+        homePage();
+    }
+});
+
+
+//functia care se ruleaza, fie de 25 sau 50 de minute de munca in functie de durata pomodorului 30 respectiv 60 de minute
+//parametrul pomodoroTime este in minute
+function startPomodoro(pomodoroTime) {
+    
+    butoane.innerHTML = `
+        <button id="exit">Exit Pomodoro</button>
+    `;
+
+    //se creaza timpul de lucru si timpul de pauza in secunde in functia de durata pomodoro-ului
+    let pauseTime;
+    let valoarePomodoro;
+    if (pomodoroTime === 60) {
+        totalTime = 50*60;
+        pauseTime = 10*60;
+        //valoare pomodoro este de 1 daca are 30 de min sau 2 daca are 60 de min
+        valoarePomodoro = 2;        
+    }
+    else if (pomodoroTime === 30) {
+        totalTime = 30*60;
+        pauseTime = 5*60;   
+        valoarePomodoro = 1;     
+    }
+
+    //afiseza mesajele din header valabile pentru timpul de lucru
+    instructiuni.innerHTML = `<h2>Concentreaza-te asupra unui singur lucru.</h2>`;
     loop = setInterval( () => {
-        //verifica daca s-a terminat timpul
-        if( timer > 0 ) {
-            timer = timer - 1;
-            let sirCeas = transformaInCeas(timer);
-            header.innerHTML = `<h1>${sirCeas}</h1>`;
+        
+        //verifica daca este vreme de lucru
+        if(totalTime) {
+            totalTime -= 1;
+            let sirCeas = transformaInCeas(totalTime);
+            afisaj.innerHTML = `${sirCeas}`;
             document.title = `${sirCeas} min`;
             //console.log(timer);
         }
-        //daca a ajuns la zero timerul, adica pomodoro-ul a ajuns la final
-        else StartReward();
-    },1000);
-};
+        else if(totalTime === 0 ) {
+            horn.play();
+            clearTimeout(loop);   
+            pomodoroFinalizateAstazi += valoarePomodoro;
+            homePage();
+        }
+        if(totalTime === pauseTime) {
+            aplauze.play();
+            instructiuni.innerHTML = `<h2>Ia o pauza, fa putina miscare.</h2>`;                
+        }
+    },1000); 
+}
 
-//transforma un numar de secunde intr-un string de tipul 03:35 unde 03 este numarul de minute si 35 este numarul de secunde
+//functia care transforma un numar de secunde intr-un string de tipul 03:35 unde 03 este numarul de minute si 35 este numarul de secunde
 function transformaInCeas (x) {
     let minuteRamase = parseInt(x/60);
     let minuteRamaseZeci = parseInt(minuteRamase/10);
@@ -42,38 +95,3 @@ function transformaInCeas (x) {
     let secundeRamaseUnitati = secundeRamase - secundeRamaseZeci*10;
     return `${minuteRamaseZeci}${minuteRamaseUnitati}:${secundeRamaseZeci}${secundeRamaseUnitati}`;
 };
-
-function StartReward () {
-    clearTimeout(loop);
-    //header.innerHTML = '';
-    //da drumul la fanfara, schimba timerul cu audio-ul cu stop the cavalry
-    header.appendChild(film);
-    film.play();
-    buton.innerText = 'Reseteaza timerul';
-};
-
-//reinitializeaza timerul, butonul si timpul
-function StopTimer() {
-    //reloads audio file
-    film.load();
-    //clears setinterval 
-    clearTimeout(loop);
-    //rests time
-    timer = pomodoroTime;
-    //refreshes timer displayed
-    header.innerHTML = `<h1>60:00</h1>`;
-    //rests button text
-    buton.innerText = 'Start Pomodoro';
-    document.title = 'Start Pomodoro';
-};
-
-buton.addEventListener('click', () => {
-    if(buton.innerText === 'Start Pomodoro') {
-        StartTimer();
-        buton.classList.add('buton-pauza');
-    }
-    else if (buton.innerText === 'Ia o pauza' || buton.innerText === 'Reseteaza timerul') {
-        StopTimer();
-        buton.classList.remove('buton-pauza');
-    }
-});

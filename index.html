@@ -5,27 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="style.css">
-    <title>Document</title>
+    <title>Start Pomodoro</title>
 </head>
-<body>
-    
-    <div id="header" class="content">
-        <h1>60:00</h1>
+<body onload="homePage()">
+    <div class="wrapper">
+        <div id="afisaj" class="content"></div>
+        <div id="instructiuni" class="content"></div>
+        <div id="butoane" class="content"></div>            
     </div>
-    
-    <div id="main" class="content">
-        <ul>
-            <li>Reguli Pomodoro:</li>
-            <li>Timp de 60 de minute focuseaza-te asupra unei singure activitati.</li>
-            <li>Ia o pauza scurta si recompenseaza-te la finalul celor 60 de minute.</li>
-            <li>Daca te apuci de orice altceva opreste Pomodoro-ul si ia-o de la capat.</li>
-        </ul>
-    </div>
-    
-    <div id="footer" class="content">
-        <button id="buton" class="buton-normal">Start Pomodoro</button>
-    </div>
-    
     <script src="scripts.js"></script>
 </body>
 </html>

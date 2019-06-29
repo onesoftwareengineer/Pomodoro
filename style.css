@@ -1,80 +1,38 @@
 body {
-    background-image: url("https://www.awakenthegreatnesswithin.com/wp-content/uploads/2018/05/Focus-On-Yourself-Quotes-1.jpg");
-    background-repeat: no-repeat;
-    background-position: center;
+    background-repeat: no-repeat; /* Do not repeat the image */
 }
 
-.content {
+.wrapper {
+    margin: auto;
     max-width: 600px;
     width: 90%;
-    margin: auto;
 }
 
-#header {
-    margin-top: 3%;
-    background-color: #2ab7ca;
+#afisaj, #instructiuni, #butoane{
+    color: white;
+    background-color: royalblue;
     text-align: center;
-    padding-top: 50px;
-    padding-bottom: 50px;
-    position: relative;
-}
-
-#header h1 {
-    color: white;
+    padding-top: 3%;
+    padding-bottom: 3%;
     font-family: Arial, Helvetica, sans-serif;
-    font-size: 60px;
-    font-weight: lighter;
 }
 
-.buton-normal {
-    /* background-color: #fe4a49; */
-    background-color: #2ab7ca;
-    color: white;
-    padding: 20px;
-    border-radius: 3px;
-    width: 50%;
+#afisaj {
+    font-size: 100px;
+    opacity: 0.7;
+    margin-top: 25%;
+}
+
+ul,h1,h2,h3 {
+    margin: 0px;
+}
+
+h3 {
+    margin-top: 5px;
+}
+
+button {
+    background-color: azure;
     border: 0px;
-    display: block;
-    margin: auto;
-    cursor: pointer;
-}
-
-.buton-pauza {
-    background-color: slategrey !important;
-}
-
-.buton-normal:focus {
-    border: 0px;
-    outline: 0px;
-}
-
-#main {
-    padding-top: 50px;
-    padding-bottom: 50px;
-    color: dimgrey;
-    background-color: #e6e6ea;
-}
-
-#main ul {
-    width: 80%;
-    margin: auto;
-}
-
-li:first-child {
-    list-style: none;
-    margin-bottom: 15px;
-    font-weight: bold;
-}
-
-#footer {
-    background-color: #e6e6ea;
-    padding-bottom: 50px;
-}
-
-video {
-    width: 100%;
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    /* max-width: 600px; */
+    padding: 8px 20px;
 }
