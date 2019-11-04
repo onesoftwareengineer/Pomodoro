@@ -7,6 +7,8 @@ const pomodoroPauseTime = 5*60;
 let pomodorosDoneToday = 0;
 //is used for counting down time left, can also be used for debugging by setting up time left for the counter
 let totalTime;
+//dailyReward stores the money bonus received
+let dailyReward = 0;
 //jiro ono quotes and images
 const jiroOnoContent = [
     {
@@ -81,15 +83,15 @@ const jiroOnoContent = [
     }    
 ];
 //selects different divs on page
-const afisaj = document.getElementById('afisaj');
-const instructiuni = document.getElementById('instructiuni');
-const butoane = document.getElementById('butoane');
+const headsUpDisplay = document.getElementById('headsUpDisplay');
+const instructions = document.getElementById('instructions');
+const buttons = document.getElementById('buttons');
 const body = document.querySelector('body');
 //defining loop in global scope to be able to stop setinterval 
 let loop;
 //defining audio objects through Audio class
-var pomodoroDoneSound = new Audio('bell.mp3');
-var pauseSound = new Audio('bravo.mp3');
+var pomodoroDoneSound = new Audio('bravo.mp3');
+var pauseSound = new Audio('bell.mp3');
 //creating and appending soundon image to DOM
 const soundOn = document.createElement('img');
 soundOn.src = 'soundon.png';
@@ -107,9 +109,10 @@ let sound = true;
 const startPomodoroWorkButton = createPomodoroButton('Start Pomodoro','pomodoro-start-button');
 const stopPomodoroButton = createPomodoroButton('Stop Pomodoro','pomodoro-stop-button');
 const startPomodoroPauseButton = createPomodoroButton('Start Pause','pomodoro-pause-button');
+const exitPomodoroButton = createPomodoroButton('Exit Pomodoro','pomodoro-exit-button');
 const spacingSpan = document.createElement('span');
 spacingSpan.innerText = ' ';
-butoane.appendChild(spacingSpan);
+buttons.appendChild(spacingSpan);
 const anotherPomodoroButton = createPomodoroButton('New Pomodoro','another-pomodoro-button');
 
 
@@ -121,7 +124,7 @@ function createPomodoroButton(text, id) {
     newButton.id = id;
     newButton.style.display = 'none';
     //appends newly created element to the button section of the page
-    butoane.appendChild(newButton);
+    buttons.appendChild(newButton);
     return newButton;
 };
 
@@ -145,52 +148,27 @@ document.querySelector('body').addEventListener('click', (event) => {
     }
 });
 
-//adding event listeners for all buttons
-butoane.addEventListener ('click', (event)=> {
-    if(event.target.id === 'pomodoro-start-button') {
-        //hides start button
-        startPomodoroWorkButton.style.display = 'none';
-        startPomodoro();
-    }
-    else if(event.target.id === 'pomodoro-stop-button') {
-        startPomodoroPauseButton.style.display = 'none';
-        stopPomodoroButton.style.display = 'none';
-        window.clearTimeout(loop);   
-        homePage();
-    }
-    else if(event.target.id === 'another-pomodoro-button') {
-        startPomodoroPauseButton.style.display = 'none';
-        anotherPomodoroButton.style.display = 'none';
-        startPomodoro();
-    }
-    else if(event.target.id === 'pomodoro-pause-button') {
-        startPomodoroPauseButton.style.display = 'none';
-        anotherPomodoroButton.style.display = 'none';
-        pausePomodoro();
-    }
-});
-
 //displays pomodoro home page
 function homePage () {
     //afiseaza prima pagina
     body.style.backgroundImage = `url('https://www.shokunin.com/img/80mm/i5.jpg')`;
     body.style.backgroundSize = "cover";
-    butoane.style.display = 'block';
-    afisaj.innerHTML = `${dailyPomodoroTarget-pomodorosDoneToday} left`;
-    instructiuni.innerHTML = `<p>Start another Pomodoro, focus on one thing only otherwise stop the Pomodoro.</p>`;      
+    buttons.style.display = 'block';
+    headsUpDisplay.innerHTML = `${pomodorosDoneToday/dailyPomodoroTarget*100}% done`;
+    instructions.innerHTML = `<p>Start another Pomodoro, focus on one thing only otherwise stop the Pomodoro.</p>`;      
     startPomodoroWorkButton.style.display = 'block';
 }
 
 //function that displays the counter while work time is counting
 function startPomodoro() {
     //displays ponodoro work-time, ogtherwise instructions from first page would be displayed
-    afisaj.innerHTML = `${pomodoroWorkTime/60}:00`;
+    headsUpDisplay.innerHTML = `${pomodoroWorkTime/60}:00`;
     //gets a random jiro object with quote, mp3 and photo
     const randomJiroObject = jiroOnoContent[ Math.floor( Math.random()*jiroOnoContent.length ) ];
     //displays random jiro photo
     body.style.backgroundImage = `url('${randomJiroObject.image}')`;
     //displays random jiro quote
-    instructiuni.innerHTML = `${randomJiroObject.quote}`;
+    instructions.innerHTML = `${randomJiroObject.quote}`;
     //reads the quote, by playing a mp3 if sound is on
     quoteSound = new Audio(`audio/${randomJiroObject.sound}`);
     //plays sound only if sound is true, variable sound tells if sound was muted by the user, look at toggling sound on or off event listener
@@ -208,7 +186,7 @@ function startPomodoro() {
         if(totalTime) {
             totalTime -= 1;
             let sirCeas = transformaInCeas(totalTime);
-            afisaj.innerHTML = `${sirCeas}`;
+            headsUpDisplay.innerHTML = `${sirCeas}`;
             document.title = `${sirCeas} min`;
         }
         //checks if time is zero and daily pomodoro target is done
@@ -220,20 +198,22 @@ function startPomodoro() {
         //else if time is zero, so pomodoro work time is already over
         else if(totalTime === 0 ) {
             pomodorosDoneToday += 1;
+            //ofera recompensa
+            serveDailyReward ()
             pauseSound.play();
             window.clearTimeout(loop);
             stopPomodoroButton.style.display = 'none';
             //displays ponodoro pause-time, otherwise 00:00 would be displayed from work time
-            afisaj.innerHTML = `0${pomodoroPauseTime/60}:00`;
+            headsUpDisplay.innerHTML = `0${pomodoroPauseTime/60}:00`;
             //changes background to jiro happy theme
             body.style.backgroundImage = `url('https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.japantimes.2xx.jp%2Fwp-content%2Fuploads%2F2018%2F11%2Fn-michelin-z-20181128-870x535.jpg&f=1')`;
             //hides pomodoro stop button
             stopPomodoroButton.style.display = 'none';
             //shows pomodoro start pause or continue pomodoro button
             startPomodoroPauseButton.style.display = 'inline-block';
-            anotherPomodoroButton.style.display = 'inline-block';
+            //anotherPomodoroButton.style.display = 'inline-block';
             //updates instructions pane    
-            instructiuni.innerHTML = `<p>Take a ${pomodoroPauseTime/60} min break and move a bit or continue to work without pause.</p>`;
+            instructions.innerHTML = `<p>Take a ${pomodoroPauseTime/60} min break and move a bit or continue to work without pause.</p>`;
         }
     },1000);
 }
@@ -247,19 +227,19 @@ function pausePomodoro() {
     loop = setInterval( () => {
         anotherPomodoroButton.style.display = 'none';
         startPomodoroPauseButton.style.display = 'none';
-        instructiuni.innerHTML = `<p>Get up and start moving a bit, unfocus your eyesight, go to the toilet.</p>`;
+        instructions.innerHTML = `<p>Get up and start moving a bit, unfocus your eyesight, go to the toilet.</p>`;
         //if totaltime is different from zero, so there is pause time left
         if(totalTime) {
             totalTime -= 1;
             let sirCeas = transformaInCeas(totalTime);
-            afisaj.innerHTML = `${sirCeas}`;
+            headsUpDisplay.innerHTML = `${sirCeas}`;
             document.title = `${sirCeas} min`;
         }
         //else if time is zero, so pomodoro pause time is already over
         else if(totalTime === 0 ) {
             pomodoroDoneSound.play();
             window.clearTimeout(loop);
-            homePage();
+            showRewardScreen();
         }
     },1000);  
 }
@@ -284,3 +264,67 @@ function runFireworks() {
     `;
     if(!sound) document.getElementById('myVideo').muted = true;
 }
+
+// function serveDailyReward inspired by B.F.Skinner mice experiments
+// returns a random reward that has been added to the daily reward
+function serveDailyReward () {
+    //premii si probabilitati:
+    //0.01 sanse - 100 lei
+    //0.09 sanse - 10 lei
+    //0.2 sanse - nimic
+    //0.7 sanse - 5 lei
+    let randomReward = 0;
+    let randomNumber = Math.random();
+    if(randomNumber <= 0.01) randomReward = 100;
+    else if(randomNumber <= 0.09) randomReward = 10;
+    else if(randomNumber <= 0.2) {}
+    else randomReward = 5;
+    dailyReward+= randomReward;
+    return randomReward;
+}
+
+//function that displays the reward screen
+function showRewardScreen() {
+    //shows reward you got by doing the pomodoro
+    const reward = serveDailyReward();
+    if(reward !== 0) {
+        headsUpDisplay.innerText = `Get ${reward} lei`;
+        instructions.innerHTML = `<p>Keep up the good work and you'll certainly get to be the best in what you do.</p>`;
+        body.style.backgroundImage = `url('http://rulesforthemoderngirl.com/wp-content/uploads/2015/01/jiro_dreams_of_sushi_ver2_xlg.jpg')`;
+    }
+    else {
+        headsUpDisplay.innerText = `Get ${reward} lei`;
+        instructions.innerHTML = `<p>Better luck next time, keep doing those Pomodoro's Man.</p>`;
+        body.style.backgroundImage = `url(https://i.imgur.com/LXQjNbk.jpg)`;        
+    }
+    exitPomodoroButton.style.display = 'inline-block';
+}
+
+//adding event listeners for all buttons
+buttons.addEventListener ('click', (event)=> {
+    if(event.target.id === 'pomodoro-start-button') {
+        //hides start button
+        startPomodoroWorkButton.style.display = 'none';
+        startPomodoro();
+    }
+    else if(event.target.id === 'pomodoro-stop-button') {
+        startPomodoroPauseButton.style.display = 'none';
+        stopPomodoroButton.style.display = 'none';
+        window.clearTimeout(loop);   
+        homePage();
+    }
+    else if(event.target.id === 'another-pomodoro-button') {
+        startPomodoroPauseButton.style.display = 'none';
+        anotherPomodoroButton.style.display = 'none';
+        startPomodoro();
+    }
+    else if(event.target.id === 'pomodoro-pause-button') {
+        startPomodoroPauseButton.style.display = 'none';
+        anotherPomodoroButton.style.display = 'none';
+        pausePomodoro();
+    }
+    else if(event.target.id === 'pomodoro-exit-button') {
+        exitPomodoroButton.style.display = 'none';
+        homePage();
+    }
+});
