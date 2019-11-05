@@ -295,7 +295,7 @@ function showRewardScreen() {
     else {
         headsUpDisplay.innerText = `Get ${reward} lei`;
         instructions.innerHTML = `<p>Better luck next time, keep doing those Pomodoro's Man.</p>`;
-        body.style.backgroundImage = `url(https://i.imgur.com/LXQjNbk.jpg)`;        
+        body.style.backgroundImage = `url('https://i.imgur.com/LXQjNbk.jpg')`;        
     }
     exitPomodoroButton.style.display = 'inline-block';
 }
