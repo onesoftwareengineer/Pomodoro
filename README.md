@@ -2,42 +2,39 @@
 
 ecrane:
 home
-    cate ai facut din cate
-    cati bani primesti
+    % of daily target
     on start button 
-        play random jiro quote
-        send user to work screen
+        go to work screen
 
 work
-    show random jiro photo
+    displays 
+        motivational video on discipline
+        or image with quote 
     countdown from 25 to zero
     on stop pomodoro 
-        play huiduieli sound
+        play huoo awful sound
         show home screen
     on countdown ready 
-        play pause sound
-        send user to pause screen
-
-pause
-    countdown from 5 to zero
-    on countdown ready 
         send user to reward screen
-        play victory sound
 
 reward
+    increments pomodoros done today
     give random various reward
-    show random jiro happy screen
-    on exit check if 
+    displays happy photo
+    increments dailyreward
+    displays total reward in cash
+    plays bravo sound
+    displays you'll make it positive programming
+    blinks reward in tab
+    on go to homescreen
         pomodoro screen show home screen
 
 
-
-showHomeScreen()
-
-showWorkScreen()
-
-showPauseScreen()
-
-showRewardScreen() done :)
-
-
+ToDo Que:
+add showHomeScreen()
+add showWorkScreen()
+add showPauseScreen()
+add favicon
+toggle tab title time countdown display on when sound off
+when pomodoro is done, if sound is off pause or done will blink
+add daily reward somewhere, eventually homescreen

@@ -1,5 +1,5 @@
 //the following variables can be changed to change the pomodoro program
-const dailyHoursOfWork = 5;
+const dailyHoursOfWork = 8;
 const dailyPomodoroTarget = dailyHoursOfWork * 2; 
 const pomodoroWorkTime = 25*60;
 const pomodoroPauseTime = 5*60;
@@ -109,7 +109,7 @@ let sound = true;
 const startPomodoroWorkButton = createPomodoroButton('Start Pomodoro','pomodoro-start-button');
 const stopPomodoroButton = createPomodoroButton('Stop Pomodoro','pomodoro-stop-button');
 const startPomodoroPauseButton = createPomodoroButton('Start Pause','pomodoro-pause-button');
-const exitPomodoroButton = createPomodoroButton('Exit Pomodoro','pomodoro-exit-button');
+const exitPomodoroButton = createPomodoroButton('Homescreen','pomodoro-exit-button');
 const spacingSpan = document.createElement('span');
 spacingSpan.innerText = ' ';
 buttons.appendChild(spacingSpan);
@@ -154,7 +154,7 @@ function homePage () {
     body.style.backgroundImage = `url('https://www.shokunin.com/img/80mm/i5.jpg')`;
     body.style.backgroundSize = "cover";
     buttons.style.display = 'block';
-    headsUpDisplay.innerHTML = `${pomodorosDoneToday/dailyPomodoroTarget*100}% done`;
+    headsUpDisplay.innerHTML = `${parseInt(pomodorosDoneToday/dailyPomodoroTarget*100)}% done`;
     instructions.innerHTML = `<p>Start another Pomodoro, focus on one thing only otherwise stop the Pomodoro.</p>`;      
     startPomodoroWorkButton.style.display = 'block';
 }
@@ -192,21 +192,17 @@ function startPomodoro() {
         //checks if time is zero and daily pomodoro target is done
         else if(totalTime === 0 && (pomodorosDoneToday+1) === dailyPomodoroTarget) {
             //mutes fireworks sound if pomodoro app sound is off
-            runFireworks();
+            //runFireworks();
             window.clearTimeout(loop);
         }
         //else if time is zero, so pomodoro work time is already over
         else if(totalTime === 0 ) {
             pomodorosDoneToday += 1;
-            //ofera recompensa
-            serveDailyReward ()
             pauseSound.play();
             window.clearTimeout(loop);
             stopPomodoroButton.style.display = 'none';
             //displays ponodoro pause-time, otherwise 00:00 would be displayed from work time
             headsUpDisplay.innerHTML = `0${pomodoroPauseTime/60}:00`;
-            //changes background to jiro happy theme
-            body.style.backgroundImage = `url('https://proxy.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.japantimes.2xx.jp%2Fwp-content%2Fuploads%2F2018%2F11%2Fn-michelin-z-20181128-870x535.jpg&f=1')`;
             //hides pomodoro stop button
             stopPomodoroButton.style.display = 'none';
             //shows pomodoro start pause or continue pomodoro button
@@ -255,7 +251,7 @@ function transformaInCeas (x) {
     return `${minuteRamaseZeci}${minuteRamaseUnitati}:${secundeRamaseZeci}${secundeRamaseUnitati}`;
 };
 
-//fireworks function
+//fireworks function is currently not being used
 function runFireworks() {
     document.querySelector('body').innerHTML = `
         <video autoplay loop id="myVideo">
@@ -265,9 +261,9 @@ function runFireworks() {
     if(!sound) document.getElementById('myVideo').muted = true;
 }
 
-// function serveDailyReward inspired by B.F.Skinner mice experiments
+// function servePomodoroReward inspired by B.F.Skinner mice experiments
 // returns a random reward that has been added to the daily reward
-function serveDailyReward () {
+function servePomodoroReward () {
     //premii si probabilitati:
     //0.01 sanse - 100 lei
     //0.09 sanse - 10 lei
@@ -286,15 +282,15 @@ function serveDailyReward () {
 //function that displays the reward screen
 function showRewardScreen() {
     //shows reward you got by doing the pomodoro
-    const reward = serveDailyReward();
+    const reward = servePomodoroReward();
     if(reward !== 0) {
-        headsUpDisplay.innerText = `Get ${reward} lei`;
-        instructions.innerHTML = `<p>Keep up the good work and you'll certainly get to be the best in what you do.</p>`;
+        headsUpDisplay.innerText = `${reward} lei`;
+        instructions.innerHTML = `<p>have been rewarded to you, daily total is ${dailyReward} lei. You're doing a good job, keep it up.</p>`;
         body.style.backgroundImage = `url('http://rulesforthemoderngirl.com/wp-content/uploads/2015/01/jiro_dreams_of_sushi_ver2_xlg.jpg')`;
     }
     else {
-        headsUpDisplay.innerText = `Get ${reward} lei`;
-        instructions.innerHTML = `<p>Better luck next time, keep doing those Pomodoro's Man.</p>`;
+        headsUpDisplay.innerText = `${reward} lei`;
+        instructions.innerHTML = `<p>Better luck next time, keep doing those Pomodoro's man.</p>`;
         body.style.backgroundImage = `url('https://i.imgur.com/LXQjNbk.jpg')`;        
     }
     exitPomodoroButton.style.display = 'inline-block';
