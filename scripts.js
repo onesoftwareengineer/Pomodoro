@@ -108,7 +108,6 @@ let sound = true;
 //creates start pomodoro work, start pomodoro pause, stop pomodoro buttons
 const startPomodoroWorkButton = createPomodoroButton('Start Pomodoro','pomodoro-start-button');
 const stopPomodoroButton = createPomodoroButton('Stop Pomodoro','pomodoro-stop-button');
-const startPomodoroPauseButton = createPomodoroButton('Start Pause','pomodoro-pause-button');
 const exitPomodoroButton = createPomodoroButton('Homescreen','pomodoro-exit-button');
 const spacingSpan = document.createElement('span');
 spacingSpan.innerText = ' ';
@@ -156,6 +155,8 @@ function homePage () {
     buttons.style.display = 'block';
     headsUpDisplay.innerHTML = `${parseInt(pomodorosDoneToday/dailyPomodoroTarget*100)}% done`;
     instructions.innerHTML = `<p>Start another Pomodoro, focus on one thing only otherwise stop the Pomodoro.</p>`;      
+    //changes message in the browsers tab title
+    document.title = "Start Pomodoro";
     startPomodoroWorkButton.style.display = 'block';
 }
 
@@ -163,6 +164,7 @@ function homePage () {
 function startPomodoro() {
     //displays ponodoro work-time, ogtherwise instructions from first page would be displayed
     headsUpDisplay.innerHTML = `${pomodoroWorkTime/60}:00`;
+    
     //gets a random jiro object with quote, mp3 and photo
     const randomJiroObject = jiroOnoContent[ Math.floor( Math.random()*jiroOnoContent.length ) ];
     //displays random jiro photo
@@ -173,6 +175,7 @@ function startPomodoro() {
     quoteSound = new Audio(`audio/${randomJiroObject.sound}`);
     //plays sound only if sound is true, variable sound tells if sound was muted by the user, look at toggling sound on or off event listener
     if(sound) quoteSound.play();
+    
     //adds the exit button
     stopPomodoroButton.style.display = 'block';
     //initializing total time to work with value of pomodoroWorkTime
@@ -187,57 +190,20 @@ function startPomodoro() {
             totalTime -= 1;
             let sirCeas = transformaInCeas(totalTime);
             headsUpDisplay.innerHTML = `${sirCeas}`;
-            document.title = `${sirCeas} min`;
-        }
-        //checks if time is zero and daily pomodoro target is done
-        else if(totalTime === 0 && (pomodorosDoneToday+1) === dailyPomodoroTarget) {
-            //mutes fireworks sound if pomodoro app sound is off
-            //runFireworks();
-            window.clearTimeout(loop);
+            // document.title = `${sirCeas} min`;
+            // blinks word Work in the browsers tab title
+            document.title = totalTime % 3 === 0 ? "Pomodoro" : "in progress";
         }
         //else if time is zero, so pomodoro work time is already over
         else if(totalTime === 0 ) {
-            pomodorosDoneToday += 1;
-            pauseSound.play();
+            //clears setinterval loop
             window.clearTimeout(loop);
-            stopPomodoroButton.style.display = 'none';
-            //displays ponodoro pause-time, otherwise 00:00 would be displayed from work time
-            headsUpDisplay.innerHTML = `0${pomodoroPauseTime/60}:00`;
             //hides pomodoro stop button
             stopPomodoroButton.style.display = 'none';
-            //shows pomodoro start pause or continue pomodoro button
-            startPomodoroPauseButton.style.display = 'inline-block';
-            //anotherPomodoroButton.style.display = 'inline-block';
-            //updates instructions pane    
-            instructions.innerHTML = `<p>Take a ${pomodoroPauseTime/60} min break and move a bit or continue to work without pause.</p>`;
-        }
-    },1000);
-}
-
-//function that displays the counter while pause time is counting
-function pausePomodoro() {
-    //changes background to pause theme
-    body.style.backgroundImage = `url('http://www.ferdyonfilms.com/wp-content/uploads/2012/04/jiro-dreams-of-sushi-1.jpg')`;
-    //initializes total time to pomodoro pause time
-    totalTime = pomodoroPauseTime;
-    loop = setInterval( () => {
-        anotherPomodoroButton.style.display = 'none';
-        startPomodoroPauseButton.style.display = 'none';
-        instructions.innerHTML = `<p>Get up and start moving a bit, unfocus your eyesight, go to the toilet.</p>`;
-        //if totaltime is different from zero, so there is pause time left
-        if(totalTime) {
-            totalTime -= 1;
-            let sirCeas = transformaInCeas(totalTime);
-            headsUpDisplay.innerHTML = `${sirCeas}`;
-            document.title = `${sirCeas} min`;
-        }
-        //else if time is zero, so pomodoro pause time is already over
-        else if(totalTime === 0 ) {
-            pomodoroDoneSound.play();
-            window.clearTimeout(loop);
+            //calls function that displays reward screen
             showRewardScreen();
         }
-    },1000);  
+    },1000);
 }
 
 //functia care transforma un numar de secunde intr-un string de tipul 03:35 unde 03 este numarul de minute si 35 este numarul de secunde
@@ -262,7 +228,7 @@ function runFireworks() {
 }
 
 // function servePomodoroReward inspired by B.F.Skinner mice experiments
-// returns a random reward that has been added to the daily reward
+// adds a random reward to the daily total reward and returns the random reward
 function servePomodoroReward () {
     //premii si probabilitati:
     //0.01 sanse - 100 lei
@@ -281,11 +247,17 @@ function servePomodoroReward () {
 
 //function that displays the reward screen
 function showRewardScreen() {
+    //displays Reward in the browsers tab title
+    document.title = "Take a break";
+    //plays pomodoro done victory sound
+    pomodoroDoneSound.play();
+    //increments number of pomodoros done today
+    pomodorosDoneToday += 1;
     //shows reward you got by doing the pomodoro
     const reward = servePomodoroReward();
     if(reward !== 0) {
         headsUpDisplay.innerText = `${reward} lei`;
-        instructions.innerHTML = `<p>have been rewarded to you, daily total is ${dailyReward} lei. You're doing a good job, keep it up.</p>`;
+        instructions.innerHTML = `<p>have been rewarded to you, daily total is ${dailyReward} lei. Now take a quick break and restart.</p>`;
         body.style.backgroundImage = `url('http://rulesforthemoderngirl.com/wp-content/uploads/2015/01/jiro_dreams_of_sushi_ver2_xlg.jpg')`;
     }
     else {
@@ -294,6 +266,7 @@ function showRewardScreen() {
         body.style.backgroundImage = `url('https://i.imgur.com/LXQjNbk.jpg')`;        
     }
     exitPomodoroButton.style.display = 'inline-block';
+
 }
 
 //adding event listeners for all buttons
@@ -304,20 +277,9 @@ buttons.addEventListener ('click', (event)=> {
         startPomodoro();
     }
     else if(event.target.id === 'pomodoro-stop-button') {
-        startPomodoroPauseButton.style.display = 'none';
         stopPomodoroButton.style.display = 'none';
         window.clearTimeout(loop);   
         homePage();
-    }
-    else if(event.target.id === 'another-pomodoro-button') {
-        startPomodoroPauseButton.style.display = 'none';
-        anotherPomodoroButton.style.display = 'none';
-        startPomodoro();
-    }
-    else if(event.target.id === 'pomodoro-pause-button') {
-        startPomodoroPauseButton.style.display = 'none';
-        anotherPomodoroButton.style.display = 'none';
-        pausePomodoro();
     }
     else if(event.target.id === 'pomodoro-exit-button') {
         exitPomodoroButton.style.display = 'none';

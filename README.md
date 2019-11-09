@@ -38,3 +38,6 @@ add favicon
 toggle tab title time countdown display on when sound off
 when pomodoro is done, if sound is off pause or done will blink
 add daily reward somewhere, eventually homescreen
+
+http://dev2.slicejack.com/fullscreen-video-demo/index.html
+https://slicejack.com/fullscreen-html5-video-background-css/
