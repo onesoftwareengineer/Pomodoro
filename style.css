@@ -8,24 +8,24 @@ body {
     width: 90%;
 }
 
-#headsUpDisplay, #instructions, #buttons{
+.headsUpDisplay, .instructions, .buttons{
     color: white;
     background-color: royalblue;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#instructions {
+.instructions {
     height: 110px;
 }
 
-#headsUpDisplay {
+.headsUpDisplay {
     font-size: 100px;
     opacity: 0.7;
     margin-top: 40%;
 }
 
-#buttons {
+.buttons {
     padding-bottom: 20px;
 }
 
